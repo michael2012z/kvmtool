@@ -58,6 +58,11 @@ struct blk_dev {
 static LIST_HEAD(bdevs);
 static int compat_id = -1;
 
+/* Michael ? why we need this? 
+ * Where was the disk data read to or write from?
+ * Todo: check virtio spec for used element.
+ * It's called when read/write finished. Different occasion for aio and normal io.
+ */
 void virtio_blk_complete(void *param, long len)
 {
 	struct blk_dev_req *req = param;
@@ -349,10 +354,12 @@ int virtio_blk__init(struct kvm *kvm)
 {
 	int i, r = 0;
 
+	/* Michael: disks were probed at disk/core.c. */
 	for (i = 0; i < kvm->nr_disks; i++) {
 		if (kvm->disks[i]->wwpn)
 			continue;
 		r = virtio_blk__init_one(kvm, kvm->disks[i]);
+		pr_debug("virtio_blk__init_one = %d", r);
 		if (r < 0)
 			goto cleanup;
 	}

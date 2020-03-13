@@ -57,7 +57,8 @@ __thread struct kvm_cpu *current_kvm_cpu;
 
 static int  kvm_run_wrapper;
 
-bool do_debug_print = false;
+//bool do_debug_print = false;
+bool do_debug_print = true;
 
 static const char * const run_usage[] = {
 	"lkvm run [<options>] [<kernel image>]",

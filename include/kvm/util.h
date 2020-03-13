@@ -47,7 +47,7 @@ extern void set_die_routine(void (*routine)(const char *err, va_list params) NOR
 #define pr_debug(fmt, ...)						\
 	do {								\
 		if (do_debug_print)					\
-			pr_info("(%s) %s:%d: " fmt, __FILE__,		\
+			pr_info("MICHAEL (%s) %s:%d: " fmt, __FILE__,		\
 				__func__, __LINE__, ##__VA_ARGS__);	\
 	} while (0)
 
@@ -107,5 +107,7 @@ static inline unsigned long roundup_pow_of_two(unsigned long x)
 struct kvm;
 void *mmap_hugetlbfs(struct kvm *kvm, const char *htlbfs_path, u64 size);
 void *mmap_anon_or_hugetlbfs(struct kvm *kvm, const char *hugetlbfs_path, u64 size);
+
+int setup_debug_socket(const char *socket_path);
 
 #endif /* KVM__UTIL_H */

@@ -398,7 +398,6 @@ int virtio_pci__signal_config(struct kvm *kvm, struct virtio_device *vdev)
 	if (virtio_pci__msix_enabled(vpci) && tbl != VIRTIO_MSI_NO_VECTOR) {
 		if (vpci->pci_hdr.msix.ctrl & cpu_to_le16(PCI_MSIX_FLAGS_MASKALL) ||
 		    vpci->msix_table[tbl].ctrl & cpu_to_le16(PCI_MSIX_ENTRY_CTRL_MASKBIT)) {
-
 			vpci->msix_pba |= 1 << tbl;
 			return 0;
 		}
@@ -439,6 +438,7 @@ int virtio_pci__init(struct kvm *kvm, void *dev, struct virtio_device *vdev,
 	if (r < 0)
 		return r;
 	vpci->port_addr = (u16)r;
+	pr_debug("vpci->port_addr = %d", vpci->port_addr);
 
 	vpci->mmio_addr = pci_get_io_space_block(IOPORT_SIZE);
 	r = kvm__register_mmio(kvm, vpci->mmio_addr, IOPORT_SIZE, false,

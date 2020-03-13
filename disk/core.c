@@ -19,6 +19,8 @@ int disk_img_name_parser(const struct option *opt, const char *arg, int unset)
 	if (kvm->cfg.image_count >= MAX_DISK_IMAGES)
 		die("Currently only 4 images are supported");
 
+	pr_debug("arg = %s\n", arg);
+	
 	kvm->cfg.disk_image[kvm->cfg.image_count].filename = arg;
 	cur = arg;
 
@@ -112,6 +114,7 @@ static struct disk_image *disk_image__open(const char *filename, bool readonly, 
 	/* blk device ?*/
 	disk = blkdev__probe(filename, flags, &st);
 	if (!IS_ERR_OR_NULL(disk)) {
+	  pr_debug("blkdev probed");
 		disk->readonly = readonly;
 		return disk;
 	}
@@ -123,6 +126,7 @@ static struct disk_image *disk_image__open(const char *filename, bool readonly, 
 	/* qcow image ?*/
 	disk = qcow_probe(fd, true);
 	if (!IS_ERR_OR_NULL(disk)) {
+	  pr_debug("qcow probed");
 		pr_warning("Forcing read-only support for QCOW");
 		disk->readonly = true;
 		return disk;
@@ -131,6 +135,7 @@ static struct disk_image *disk_image__open(const char *filename, bool readonly, 
 	/* raw image ?*/
 	disk = raw_image__probe(fd, &st, readonly);
 	if (!IS_ERR_OR_NULL(disk)) {
+	  pr_debug("raw image probed");
 		disk->readonly = readonly;
 		return disk;
 	}

@@ -169,7 +169,7 @@ int kvm_cpu__start(struct kvm_cpu *cpu)
 			kvm_cpu__run_task(cpu);
 
 		kvm_cpu__run(cpu);
-
+		
 		switch (cpu->kvm_run->exit_reason) {
 		case KVM_EXIT_UNKNOWN:
 			break;
@@ -179,6 +179,7 @@ int kvm_cpu__start(struct kvm_cpu *cpu)
 			break;
 		case KVM_EXIT_IO: {
 			bool ret;
+			pr_debug("exit_reason = KVM_EXIT_IO");
 
 			ret = kvm_cpu__emulate_io(cpu,
 						  cpu->kvm_run->io.port,

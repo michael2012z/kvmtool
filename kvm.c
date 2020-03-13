@@ -78,6 +78,9 @@ static int set_dir(const char *fmt, va_list args)
 
 	strcat(kvm_dir, "/");
 
+	pr_debug("tmp = %s", tmp);
+	pr_debug("kvm_dir = %s", kvm_dir);
+	
 	return 0;
 }
 
@@ -356,6 +359,7 @@ int kvm__init(struct kvm *kvm)
 		goto err;
 	}
 
+	pr_debug("kvm->cfg.dev = %s", kvm->cfg.dev);
 	kvm->sys_fd = open(kvm->cfg.dev, O_RDWR);
 	if (kvm->sys_fd < 0) {
 		if (errno == ENOENT)
@@ -397,6 +401,9 @@ int kvm__init(struct kvm *kvm)
 	INIT_LIST_HEAD(&kvm->mem_banks);
 	kvm__init_ram(kvm);
 
+	pr_debug("kvm->cfg.firmware_filename = %s", kvm->cfg.firmware_filename);
+	pr_debug("kvm->cfg.real_cmdline = %s", kvm->cfg.real_cmdline);
+	pr_debug("kvm->cfg.initrd_filename = %s", kvm->cfg.initrd_filename);
 	if (!kvm->cfg.firmware_filename) {
 		if (!kvm__load_kernel(kvm, kvm->cfg.kernel_filename,
 				kvm->cfg.initrd_filename, kvm->cfg.real_cmdline))
