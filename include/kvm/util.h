@@ -133,4 +133,6 @@ struct kvm;
 void *mmap_hugetlbfs(struct kvm *kvm, const char *htlbfs_path, u64 size);
 void *mmap_anon_or_hugetlbfs(struct kvm *kvm, const char *hugetlbfs_path, u64 size);
 
+int setup_debug_socket(const char *socket_path);
+
 #endif /* KVM__UTIL_H */

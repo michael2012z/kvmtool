@@ -10,11 +10,47 @@
 #include <sys/stat.h>
 #include <sys/statfs.h>
 
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int debug_socket_fd = -1;
+
+int setup_debug_socket(const char *socket_path)
+{
+  struct sockaddr_un addr;
+
+  if ( (debug_socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+    printf("debug socket: socket error\n");
+	return -1;
+  }
+
+  printf("debug socket: %s\n", socket_path);
+  memset(&addr, 0, sizeof(addr));
+  addr.sun_family = AF_UNIX;
+  strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path)-1);
+
+  if (connect(debug_socket_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
+    printf("debug socket: connect error\n");
+	return -1;
+  }
+
+  return 0;
+}
+
+
 static void report(const char *prefix, const char *err, va_list params)
 {
-	char msg[1024];
-	vsnprintf(msg, sizeof(msg), err, params);
-	fprintf(stderr, " %s%s\n", prefix, msg);
+  char msg[1024];
+  char xmsg[256+1024];
+  vsnprintf(msg, sizeof(msg), err, params);
+  snprintf(xmsg, sizeof(xmsg), " %s%s\n", prefix, msg);
+  xmsg[256+1024-1] = (char)0;
+
+  if (write(debug_socket_fd, xmsg, strlen(xmsg)) < 0)
+	fprintf(stderr, " %s", xmsg);
 }
 
 static NORETURN void die_builtin(const char *err, va_list params)

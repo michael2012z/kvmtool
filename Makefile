@@ -39,6 +39,7 @@ bindir_SQ = $(subst ','\'',$(bindir))
 
 PROGRAM	:= lkvm
 PROGRAM_ALIAS := vm
+REPORTER := reporter
 
 OBJS	+= builtin-balloon.o
 OBJS	+= builtin-debug.o
@@ -405,7 +406,7 @@ ifneq ($(WERROR),0)
 	CFLAGS += -Werror
 endif
 
-all: $(PROGRAM) $(PROGRAM_ALIAS)
+all: $(PROGRAM) $(PROGRAM_ALIAS) $(REPORTER)
 
 # CFLAGS used when building objects
 # This is intentionally not assigned using :=
@@ -433,6 +434,9 @@ $(PROGRAM): $(OBJS) $(OBJS_DYNOPT) $(OTHEROBJS) $(GUEST_OBJS)
 $(PROGRAM_ALIAS): $(PROGRAM)
 	$(E) "  LN      " $@
 	$(Q) ln -f $(PROGRAM) $@
+
+$(REPORTER): $(REPORTER).c
+	$(CC) reporter.c -o $@
 
 ifneq ($(ARCH_PRE_INIT),)
 $(GUEST_PRE_INIT): $(ARCH_PRE_INIT)
@@ -540,7 +544,7 @@ clean:
 	$(Q) rm -f x86/bios/bios-rom.h
 	$(Q) rm -f tests/boot/boot_test.iso
 	$(Q) rm -rf tests/boot/rootfs/
-	$(Q) rm -f $(DEPS) $(STATIC_DEPS) $(OBJS) $(OTHEROBJS) $(OBJS_DYNOPT) $(STATIC_OBJS) $(PROGRAM) $(PROGRAM_ALIAS) $(PROGRAM)-static $(GUEST_INIT) $(GUEST_PRE_INIT) $(GUEST_OBJS)
+	$(Q) rm -f $(DEPS) $(STATIC_DEPS) $(OBJS) $(OTHEROBJS) $(OBJS_DYNOPT) $(STATIC_OBJS) $(PROGRAM) $(PROGRAM_ALIAS) $(PROGRAM)-static $(GUEST_INIT) $(GUEST_PRE_INIT) $(GUEST_OBJS) $(REPORTER)
 	$(Q) rm -f guest/guest_init.c guest/guest_pre_init.c
 	$(Q) rm -f cscope.*
 	$(Q) rm -f tags
